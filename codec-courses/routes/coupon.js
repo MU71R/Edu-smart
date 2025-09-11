@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const { createDiscount, getAllDiscounts, getDiscountById, updateDiscount, deleteDiscount } = require("../controllers/coupon");
-const auth = require("../middleware/auth");
-router.post("/create-coupon", createDiscount);
-router.get("/get-all-coupons", getAllDiscounts);
-router.get("/get-coupon/:id", getDiscountById);
-router.put("/update-coupon/:id", updateDiscount);
-router.delete("/delete-coupon/:id", deleteDiscount);
+const { verifyTokenMiddleware } = require("../middleware/auth");
+router.post("/create-coupon", verifyTokenMiddleware, createDiscount);
+router.get("/get-all-coupons", verifyTokenMiddleware, getAllDiscounts);
+router.get("/get-coupon/:id", verifyTokenMiddleware, getDiscountById);
+router.put("/update-coupon/:id", verifyTokenMiddleware, updateDiscount);
+router.delete("/delete-coupon/:id", verifyTokenMiddleware, deleteDiscount);
 module.exports = router;

@@ -2,22 +2,21 @@ const express =require("express");
 const router =express.Router();
 const {createUser,getusers,login_user, logoutUser,getProfile,forgotPassword ,resetPassword,updateUser,updatePreferences}=require("../controllers/user");
 const upload = require("../controllers/cloudinary");
-const auth = require("../middleware/auth");
-
+const { verifyTokenMiddleware } = require('../middleware/auth');
 // عام
 router.get("/public", getusers);
 
-router.get("/profile", auth,getProfile);
+router.get("/profile", verifyTokenMiddleware, getProfile);
 
 router.post("/register",upload.single("certificate"),createUser)
 
 
 router.post("/login",login_user)
-router.post("/loge-out",logoutUser)
+router.post("/loge-out",verifyTokenMiddleware,logoutUser)
 
- router.put("/update", updateUser);
+ router.put("/update", verifyTokenMiddleware, updateUser);
 
- router.put("/preferences", updatePreferences);
+ router.put("/preferences", verifyTokenMiddleware, updatePreferences);
 
 
 

@@ -1,23 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const {createLesson,getAllLessons,getLessonsByCourse,getLessonById,updateLesson,deleteLesson} = require('../controllers/lessonController');
-const auth = require('../middleware/auth');
+const { verifyTokenMiddleware } = require('../middleware/auth');
 // إنشاء درس جديد
-router.post('/', createLesson);
+router.post('/', verifyTokenMiddleware, createLesson);
 
 // جلب كل الدروس
-router.get('/', getAllLessons);
+router.get('/', verifyTokenMiddleware, getAllLessons);
 
 // جلب كل دروس كورس معين
-router.get('/course/:courseId', getLessonsByCourse);
-
+router.get('/course/:courseId', verifyTokenMiddleware, getLessonsByCourse);
+    
 // جلب درس واحد بالـ ID
-router.get('/:id', getLessonById);
+router.get('/:id', verifyTokenMiddleware, getLessonById);
 
 // تحديث درس بالـ ID
-router.put('/:id', updateLesson);
+router.put('/:id', verifyTokenMiddleware, updateLesson);
 
 // حذف درس بالـ ID
-router.delete('/:id', deleteLesson);
+router.delete('/:id', verifyTokenMiddleware, deleteLesson);
 
 module.exports = router;

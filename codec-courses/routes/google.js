@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { googleLogin } = require('../controllers/google');
-
-router.post('/google-login', googleLogin);
+const { verifyTokenMiddleware } = require('../middleware/auth');
+router.post('/google-login', verifyTokenMiddleware, googleLogin);
 
 module.exports = router;

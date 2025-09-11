@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {createOrder,captureOrder} = require('../controllers/Payment');
-const auth = require('../middleware/auth');
-router.post('/create-order',auth,createOrder);
-router.get('/capture-order',auth,captureOrder);
+const { verifyTokenMiddleware } = require('../middleware/auth');
+router.post('/create-order',verifyTokenMiddleware,createOrder);
+router.get('/capture-order',verifyTokenMiddleware,captureOrder);
 module.exports = router;

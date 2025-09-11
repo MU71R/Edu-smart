@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const {searchAll} = require('../controllers/search'); 
-
-router.get('/', searchAll); 
+const { verifyTokenMiddleware } = require('../middleware/auth');
+router.get('/', verifyTokenMiddleware, searchAll); 
 module.exports = router;
