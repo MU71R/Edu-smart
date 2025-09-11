@@ -1,5 +1,5 @@
 const axios = require('axios');
-const User = require('../models/User');
+const User = require('../models/user');
 const Course = require('../models/Course'); // يشمل الكورس والباكج
 const Payment = require('../models/Payment');
 const Enrollment = require('../models/Enrollments');

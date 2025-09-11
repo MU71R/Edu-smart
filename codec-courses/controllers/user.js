@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const nodemailer = require('nodemailer');
-const usermodele = require("../models/User");
+const usermodele = require("../models/user");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendemai")
 require('dotenv').config()
