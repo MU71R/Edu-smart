@@ -31,8 +31,8 @@ io.on("connection", (socket) => {
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch(err => console.error("❌ MongoDB error:", err));
+  .then(() => console.log("Connected to MongoDB"))
+  .catch(err => console.error(" MongoDB error:", err));
 
 // Routes
 app.use("/user", require("./routes/User"));
