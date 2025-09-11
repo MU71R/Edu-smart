@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const socketIo = require("socket.io");
 const http = require("http");
+const serverless = require("serverless-http");
 const server = http.createServer(app);
 const io = socketIo(server, { cors: { origin: "*" } });
 app.use(express.json());
@@ -23,20 +24,15 @@ io.on("connection", (socket) => {
 
 // env
 require('dotenv').config();
-const port = process.env.PORT;
-const mongourl = process.env.MONGO_URI;
-mongoose.connect(mongourl)
-  .then(() => {
-    console.log("connected to mongodb");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+require('dotenv').config();
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch(err => console.log(err));
 
 // Routes
-const routeuser = require('./routes/user');
-app.use("/user", routeuser);
-
+const routeUser = require('./routes/user');
+app.use("/user", routeUser);
+module.exports.handler = serverless(app);
 const routeEnrollment = require('./routes/Enrollment');
 app.use("/enrollments", routeEnrollment);
 
@@ -87,7 +83,3 @@ app.use("/dashboard", routeDashboard);
 
 const routeAdmin = require('./routes/admin');
 app.use("/admin", routeAdmin);
-
-app.listen(port, () => {
-  console.log('server is running on port ' + port);
-});
