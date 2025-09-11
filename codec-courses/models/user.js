@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 
 // Regex للاسم: حروف عربية أو إنجليزية + مسافة واحدة بين الكلمات + مسموح الشرطة (-) أو الأبوستروف (')
 const NAME_REGEX = /^(?=.{2,50}$)(?!.*\s{2,})(?!.*[-']{2,})(?!.*^[\s-'])(?!.*[\s-']$)[A-Za-z\u0600-\u06FF]+(?:[ '-][A-Za-z\u0600-\u06FF]+)*$/;
-
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -117,5 +116,5 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.models.User || mongoose.model('User', userSchema);
 
