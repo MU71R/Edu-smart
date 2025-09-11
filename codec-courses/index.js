@@ -30,7 +30,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.log(err));
 
 // Routes
-const routeUser = require('./routes/user');
+const routeUser = require('./routes/User');
 app.use("/user", routeUser);
 module.exports.handler = serverless(app);
 const routeEnrollment = require('./routes/Enrollment');
