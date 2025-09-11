@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
-
+const dotenv = require("dotenv");
+dotenv.config();
 // check token function
 async function verifyTokenMiddleware(req, res, next) {
   const { authorization } = req.headers;
