@@ -35,7 +35,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error(" MongoDB error:", err));
 
 // Routes
-app.use("/user", require("./routes/User"));
+app.use("/user", require("./routes/user"));
 app.use("/enrollments", require("./routes/Enrollment"));
 app.use("/quizzes", require("./routes/quizRoutes (2)"));
 app.use("/quizResults", require("./routes/quizResultRoutes"));
