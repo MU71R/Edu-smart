@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const nodemailer = require('nodemailer');
-const usermodele = require("../models/User");
+const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendemai")
 require('dotenv').config()
@@ -11,10 +11,10 @@ const generateToken = require("../utils/jwt_utils")
 
 
 
-//getuserس
+//getuser
 var getusers = async (req, res) => {
   try {
-    var users = await usermodele.find();
+    var users = await User.find();
     res.status(200).send(users)
   } catch (err) {
     res.status(500).send({ message: "some thing is wrong" });
@@ -28,7 +28,7 @@ const createUser = async (req, res) => {
     const { name, email, password, phonenumber, city, role } = req.body;
 
     // التأكد من عدم وجود الإيميل مسبقًا
-    const existingUser = await usermodele.findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({ message: "Email already exists" });
     }
@@ -41,7 +41,7 @@ const createUser = async (req, res) => {
       newUserData.certificateURL = req.file ? req.file.path : null; // استخدم Multer لرفع الملف
     }
 
-    const newUser = new usermodele(newUserData);
+    const newUser = new User(newUserData);
     await newUser.save();
 
     // حذف كلمة المرور من الريسبونس
@@ -66,7 +66,7 @@ var login_user = async (req, res) => {
     return res.status(400).json({ message: "Please enter email and password" });
   }
 
-  const user = await usermodele.findOne({ email: email });
+  const user = await User.findOne({ email: email });
   if (!user) return res.status(404).json({ message: "User does not exist" });
 
   // تحقق من كلمة المرور
@@ -108,7 +108,7 @@ var login_user = async (req, res) => {
 //عشان يبعت لى واحد بس اللى يخصه التوكن اللى بعته فى الهيدر مش يجت كلهم 
 
 const getProfile = async (req, res) => {
-  const user = await usermodele.findById(req.user.id).select("-password");
+  const user = await User.findById(req.user.id).select("-password");
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -124,7 +124,7 @@ const updateUser = async (req, res) => {
     // الحاجات اللي عايز تعدلها
     const { name, city, phonenumber,password } = req.body;
 
-    const updatedUser = await usermodele.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
       { name, city, phonenumber,password },
       { new: true, runValidators: true } // new: يرجع النسخة الجديدة بعد التعديل
@@ -153,7 +153,7 @@ const updatePreferences = async (req, res) => {
     const { language, darkMode, notifications } = req.body;
 
     // تعديل Nested Object في Mongoose
-    const updatedUser = await usermodele.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
         "preferences.language": language,
@@ -180,7 +180,7 @@ const updatePreferences = async (req, res) => {
 // 📌 طلب إعادة تعيين كلمة المرور
 const forgotPassword = async (req, res) => {
   try {
-    const user = await usermodele.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return res.status(404).json({ message: "المستخدم غير موجود" });
     }
@@ -237,7 +237,7 @@ const resetPassword = async (req, res) => {
     }
 
     // البحث عن المستخدم
-    const user = await usermodele.findOne({ email });
+    const user = await User.findOne({ email });
     console.log("User found in DB:", user);
 
     if (!user) {
