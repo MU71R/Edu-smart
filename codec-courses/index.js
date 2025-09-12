@@ -1,14 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const socketIo = require("socket.io");
-const http = require("http");
 const serverless = require("serverless-http");
-require("dotenv").config();
+
+// تحميل dotenv فقط في البيئة المحلية
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config({ debug: true });
+}
 
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server, { cors: { origin: "*" } });
 
 // Middleware
 app.use(express.json());
@@ -18,26 +18,19 @@ app.use(cors({
   credentials: true
 }));
 
-app.set("io", io);
-
-// Socket.io events
-io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-  });
-});
-
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("Connected to MongoDB"))
-  .catch(err => console.error(" MongoDB error:", err));
+  .catch((err) => console.error("MongoDB error:", err));
 
 // Routes
 app.use("/user", require("./routes/user"));
 app.use("/enrollments", require("./routes/Enrollment"));
-app.use("/quizzes", require("./routes/quizRoutes (2)"));
+app.use("/quizzes", require("./routes/quizRoutes (2)")); // عدّل الاسم إذا لزم الأمر
 app.use("/quizResults", require("./routes/quizResultRoutes"));
 app.use("/certificates", require("./routes/certificate"));
 app.use("/payments", require("./routes/Payment"));
@@ -54,14 +47,28 @@ app.use("/sort_or_filter", require("./routes/Sort_and_filter"));
 app.use("/dashboard", require("./routes/dashboard"));
 app.use("/admin", require("./routes/admin"));
 
-// Export for Vercel
-module.exports = app;
-module.exports.handler = serverless(app);
-
-// Local run
+// تصحيح لـ Socket.io في البيئة المحلية فقط
 if (process.env.NODE_ENV !== "production") {
+  const http = require("http");
+  const socketIo = require("socket.io");
+  const server = http.createServer(app);
+  const io = socketIo(server, { cors: { origin: "*" } });
+
+  app.set("io", io);
+
+  io.on("connection", (socket) => {
+    console.log("User connected:", socket.id);
+    socket.on("disconnect", () => {
+      console.log("User disconnected:", socket.id);
+    });
+  });
+
   const port = process.env.PORT || 5000;
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
   });
 }
+
+// Export for Vercel
+module.exports = app;
+module.exports.handler = serverless(app);
