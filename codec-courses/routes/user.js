@@ -1,7 +1,17 @@
 const express =require("express");
 const router =express.Router();
-const {createUser,getusers,login_user, logoutUser,getProfile,forgotPassword ,resetPassword,updateUser,updatePreferences}=require("../controllers/User");
-const upload = require("../controllers/cloudinary");
+const {
+    createUser,
+    getusers,
+    login_user,
+    logoutUser,
+    getProfile,
+    forgotPassword,
+    resetPassword,
+    updateUser,
+    updatePreferences
+} = require("../controllers/userController");
+  const upload = require("../controllers/cloudinary");
 const { verifyTokenMiddleware } = require('../middleware/auth');
 // عام
 router.get("/public", getusers);
