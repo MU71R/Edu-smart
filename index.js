@@ -1,100 +1,93 @@
 const express = require("express");
+const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
-const serverless = require("serverless-http");
-
-// تحميل dotenv فقط في البيئة المحلية
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config({ debug: true });
-}
-
-const app = express();
-
-// Middleware
+const socketIo = require("socket.io");
+const http = require("http");
+const server = http.createServer(app);
+const io = socketIo(server, { cors: { origin: "*" } });
 app.use(express.json());
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:4200",
+  origin: "https://edu-smart-angular.vercel.app/", 
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+app.set("io", io);
+io.on("connection", (socket) => {
+    console.log("User connected:", socket.id);
 
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB error:", err));
-
-// Routes
-app.use("/user", require("./routes/user"));
-app.use("/enrollments", require("./routes/Enrollment"));
-app.use("/quizzes", require("./routes/quizRoutes (2)")); // عدّل الاسم إذا لزم الأمر
-app.use("/quizResults", require("./routes/quizResultRoutes"));
-app.use("/certificates", require("./routes/certificate"));
-app.use("/payments", require("./routes/Payment"));
-app.use("/coupons", require("./routes/coupon"));
-app.use("/chatbot", require("./routes/chatbot"));
-app.use("/google", require("./routes/google"));
-app.use("/lessons", require("./routes/lesson"));
-app.use("/courses", require("./routes/courseRoutes"));
-app.use("/conversations", require("./routes/conversation"));
-app.use("/messages", require("./routes/message"));
-app.use("/search", require("./routes/Search"));
-app.use("/ratings", require("./routes/Rating"));
-app.use("/sort_or_filter", require("./routes/Sort_and_filter"));
-app.use("/dashboard", require("./routes/dashboard"));
-app.use("/admin", require("./routes/admin"));
-// في index.js، فوق أي app.use للـ routes
-app.get("/", (req, res) => {
-  res.send(`
-    <h1>Edu-smart API is running!</h1>
-    <p>Available routes:</p>
-    <ul>
-      <li>/user/public</li>
-      <li>/enrollments</li>
-      <li>/quizzes</li>
-      <li>/quizResults</li>
-      <li>/certificates</li>
-      <li>/payments</li>
-      <li>/coupons</li>
-      <li>/chatbot</li>
-      <li>/google</li>
-      <li>/lessons</li>
-      <li>/courses</li>
-      <li>/conversations</li>
-      <li>/messages</li>
-      <li>/search</li>
-      <li>/ratings</li>
-      <li>/sort_or_filter</li>
-      <li>/dashboard</li>
-      <li>/admin</li>
-    </ul>
-  `);
+    socket.on("disconnect", () => {
+        console.log("User disconnected:", socket.id);
+    });
 });
 
-// تصحيح لـ Socket.io في البيئة المحلية فقط
-if (process.env.NODE_ENV !== "production") {
-  const http = require("http");
-  const socketIo = require("socket.io");
-  const server = http.createServer(app);
-  const io = socketIo(server, { cors: { origin: "*" } });
-
-  app.set("io", io);
-
-  io.on("connection", (socket) => {
-    console.log("User connected:", socket.id);
-    socket.on("disconnect", () => {
-      console.log("User disconnected:", socket.id);
-    });
+// env
+require('dotenv').config();
+const port = process.env.PORT;
+const mongourl = process.env.MONGO_URI;
+mongoose.connect(mongourl)
+  .then(() => {
+    console.log("connected to mongodb");
+  })
+  .catch((err) => {
+    console.log(err);
   });
 
-  const port = process.env.PORT || 5000;
-  server.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
-  });
-}
+// Routes
+const routeuser = require('./routes/user');
+app.use("/user", routeuser);
 
-module.exports = app;
-module.exports.handler = serverless(app);
+const routeEnrollment = require('./routes/Enrollment');
+app.use("/enrollments", routeEnrollment);
+
+const routequiz = require('./routes/quizRoutes (2)');
+app.use("/quizzes", routequiz);
+
+const routeresult = require('./routes/quizResultRoutes');
+app.use("/quizResults", routeresult);
+
+const routeCertificate = require('./routes/certificate');
+app.use("/certificates", routeCertificate);
+
+const routePayment = require('./routes/Payment');
+app.use("/payments", routePayment);
+
+const routeCoupon = require('./routes/coupon');
+app.use("/coupons", routeCoupon);
+
+const routeChatbot = require('./routes/chatbot');
+app.use("/chatbot", routeChatbot);
+
+const routeGoogle = require('./routes/google');
+app.use("/google", routeGoogle);
+
+const routelesson = require('./routes/lesson');
+app.use("/lessons", routelesson);
+
+const routecourse = require('./routes/courseRoutes');
+app.use("/courses", routecourse);
+
+const routeconversation = require('./routes/conversation');
+app.use("/conversations", routeconversation);
+
+const routeMessage = require('./routes/message');
+app.use("/messages", routeMessage);
+
+const routeSearch = require('./routes/Search');
+app.use("/search", routeSearch);
+
+const routeRating = require('./routes/Rating');
+app.use("/ratings", routeRating);
+
+const routeSort_and_filter = require('./routes/Sort_and_filter');
+app.use("/sort_or_filter", routeSort_and_filter);
+
+const routeDashboard = require('./routes/dashboard');
+app.use("/dashboard", routeDashboard);
+
+const routeAdmin = require('./routes/admin');
+app.use("/admin", routeAdmin);
+
+app.listen(port, () => {
+  console.log('server is running on port ' + port);
+});
