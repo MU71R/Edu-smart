@@ -46,6 +46,33 @@ app.use("/ratings", require("./routes/Rating"));
 app.use("/sort_or_filter", require("./routes/Sort_and_filter"));
 app.use("/dashboard", require("./routes/dashboard"));
 app.use("/admin", require("./routes/admin"));
+// في index.js، فوق أي app.use للـ routes
+app.get("/", (req, res) => {
+  res.send(`
+    <h1>Edu-smart API is running!</h1>
+    <p>Available routes:</p>
+    <ul>
+      <li>/user/public</li>
+      <li>/enrollments</li>
+      <li>/quizzes</li>
+      <li>/quizResults</li>
+      <li>/certificates</li>
+      <li>/payments</li>
+      <li>/coupons</li>
+      <li>/chatbot</li>
+      <li>/google</li>
+      <li>/lessons</li>
+      <li>/courses</li>
+      <li>/conversations</li>
+      <li>/messages</li>
+      <li>/search</li>
+      <li>/ratings</li>
+      <li>/sort_or_filter</li>
+      <li>/dashboard</li>
+      <li>/admin</li>
+    </ul>
+  `);
+});
 
 // تصحيح لـ Socket.io في البيئة المحلية فقط
 if (process.env.NODE_ENV !== "production") {
