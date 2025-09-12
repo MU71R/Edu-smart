@@ -8,7 +8,7 @@ const server = http.createServer(app);
 const io = socketIo(server, { cors: { origin: "*" } });
 app.use(express.json());
 app.use(cors({
-  origin: "https://edu-smart-angular.vercel.app/", 
+  origin: "https://edu-smart-angular.vercel.app", 
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
