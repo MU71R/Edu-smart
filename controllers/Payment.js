@@ -63,8 +63,8 @@ exports.createOrder = async (req, res) => {
         application_context: {
           brand_name: 'SmartLearn Training',
           user_action: 'PAY_NOW',
-          return_url: `http://localhost:4200/payment-success?itemId=${itemId}&itemType=${itemType}`,
-          cancel_url: 'http://localhost:4200/payment-cancel'
+          return_url: `https://edu-smart-pink.vercel.app/payment-success?itemId=${itemId}&itemType=${itemType}`,
+          cancel_url: `https://edu-smart-pink.vercel.app/payment-cancel`
         }
       },
       { headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'PayPal-Request-Id': `REQ_${Date.now()}` } }
