@@ -32,6 +32,11 @@ mongoose.connect(mongourl)
   .catch((err) => {
     console.log(err);
   });
+  
+  // test server
+  app.get("/", (req, res) => {
+    res.send("Edu-smart API is running!");
+  });  
 
 // Routes
 const routeuser = require('./routes/user');
