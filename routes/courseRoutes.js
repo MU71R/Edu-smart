@@ -7,7 +7,7 @@ const upload = require("../controllers/cloudinary");
 // تعريف مسارات الكورسات
 router.post('/create', verifyTokenMiddleware, upload.single("coverImage"), courseController.createCourse);  
 router.get('/get-package/:id', courseController.getPackageById); 
-router.get('/get-all-packages', verifyTokenMiddleware, courseController.getallpackages);              // GET /api/courses -> لجلب كل الكورسات
+router.get('/get-all-packages',courseController.getallpackages);              // GET /api/courses -> لجلب كل الكورسات
 router.get('/all',courseController.getAllCourses);                         // GET /api/courses -> لجلب كل الكورسات
 router.get('/get/:id', courseController.getCourseById);          // GET /api/courses/:id -> لجلب كورس واحد بالـ ID
 router.get('/my-courses', verifyTokenMiddleware, courseController.getMyCourses); // GET /api/courses/my-courses -> لجلب كورسات المدرب
