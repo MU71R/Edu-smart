@@ -27,7 +27,6 @@ const createUser = async (req, res) => {
   try {
     const { name, email, password, phonenumber, city, role } = req.body;
 
-    // التأكد من عدم وجود الإيميل مسبقًا
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({ message: "Email already exists" });
@@ -35,28 +34,27 @@ const createUser = async (req, res) => {
 
     const newUserData = { name, email, password, phonenumber, city, role };
 
-    // إذا المستخدم مدرس، اجعل isApproved = false وأضف رابط الشهادة
     if (role === "instructor") {
       newUserData.isApproved = false;
-      newUserData.certificateURL = req.file ? req.file.path : null; // استخدم Multer لرفع الملف
+      newUserData.status = "pending";
+      newUserData.certificateURL = req.file ? req.file.path : null;
     }
 
     const newUser = new User(newUserData);
     await newUser.save();
 
-    // حذف كلمة المرور من الريسبونس
     const { password: _, ...userData } = newUser.toObject();
 
-    res.status(201).json({ 
-      message: "User created successfully", 
+    res.status(201).json({
+      message: "User created successfully",
       user: userData,
-      isApproved: newUserData.isApproved || false  // لو مدرس هيكون false تلقائي
+      isApproved: newUserData.isApproved || false
     });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 // login
