@@ -27,11 +27,13 @@ const createUser = async (req, res) => {
   try {
     const { name, email, password, phonenumber, city, role } = req.body;
 
+    // check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({ message: "Email already exists" });
     }
 
+    // إعداد بيانات المستخدم
     const newUserData = { name, email, password, phonenumber, city, role };
 
     if (role === "instructor") {
@@ -40,15 +42,26 @@ const createUser = async (req, res) => {
       newUserData.certificateURL = req.file ? req.file.path : null;
     }
 
+    // إنشاء وحفظ المستخدم
     const newUser = new User(newUserData);
     await newUser.save();
 
+    // إنشاء token
+    const token = jwt.sign(
+      { id: newUser._id, email: newUser.email, role: newUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // تجهيز الداتا من غير الباسورد
     const { password: _, ...userData } = newUser.toObject();
 
+    // الرد
     res.status(201).json({
       message: "User created successfully",
       user: userData,
-      isApproved: newUserData.isApproved || false
+      token,
+      isApproved: newUserData.isApproved || false,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
