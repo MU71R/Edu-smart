@@ -32,7 +32,7 @@ const createUser = async (req, res) => {
     if (existingUser) {
       return res.status(409).json({ message: "Email already exists" });
     }
-
+    
     // إعداد بيانات المستخدم
     const newUserData = { name, email, password, phonenumber, city, role };
 
@@ -86,9 +86,10 @@ var login_user = async (req, res) => {
 
   // إذا المستخدم مدرس ولم تتم الموافقة
   if (user.role === "instructor" && !user.isApproved) {
-    return res.status(200).json({
-      message: "account not approved by Admin",
+    return res.status(403).json({
+      message: "Account not approved by Admin",
       isApproved: false,
+      status: user.status, // pending / rejected
       user: {
         _id: user._id,
         name: user.name,
@@ -98,12 +99,13 @@ var login_user = async (req, res) => {
     });
   }
 
-  // إذا كل شيء تمام
+  // لو Approved
   const token = generateToken(user);
   res.status(200).json({
     message: "login successfully",
     token,
     isApproved: user.isApproved,
+    status: user.status,
     user: {
       _id: user._id,
       name: user.name,
