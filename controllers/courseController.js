@@ -82,15 +82,19 @@ exports.getCourseById = async (req, res) => {
 
 exports.getMyCourses = async (req, res) => {
     try {
-        const courses = await Course.find({ $or: [
-            { instructorID: req.user.id },  // كورسات
-            { type: 'package' }             // كل البكجات
-        ] }).populate("instructorID", "name");
-        res.status(200).json(courses);
+      const courses = await Course.find({
+        $or: [
+          { instructorID: req.user.id, type: 'course' },   // كورسات تخص الإنستركتور
+          { instructorID: req.user.id, type: 'package' }   // البكجات بتاعته فقط
+        ]
+      }).populate("instructorID", "name");
+  
+      res.status(200).json(courses);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
-};
+  };
+  
 
 // تحديث كورس أو باكج
 exports.updateCourse = async (req, res) => {
